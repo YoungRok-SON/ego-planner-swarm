@@ -8,17 +8,17 @@ def generate_launch_description():
     # LaunchConfigurations
     map_size_x = LaunchConfiguration('map_size_x_', default=42.0)
     map_size_y = LaunchConfiguration('map_size_y_', default=30.0)
-    map_size_z = LaunchConfiguration('map_size_z_', default=5.0)
+    map_size_z = LaunchConfiguration('map_size_z_', default=2.0)
     
     odometry_topic = LaunchConfiguration('odometry_topic', default='odom')
     camera_pose_topic = LaunchConfiguration('camera_pose_topic', default='camera_pose')
     depth_topic = LaunchConfiguration('depth_topic', default='depth_image')
     cloud_topic = LaunchConfiguration('cloud_topic', default='cloud')
     
-    cx = LaunchConfiguration('cx', default=321.04638671875)
-    cy = LaunchConfiguration('cy', default=243.44969177246094)
-    fx = LaunchConfiguration('fx', default=387.229248046875)
-    fy = LaunchConfiguration('fy', default=387.229248046875)
+    cx = LaunchConfiguration('cx', default=320.0)
+    cy = LaunchConfiguration('cy', default=240.0)
+    fx = LaunchConfiguration('fx', default=432.496042035043)
+    fy = LaunchConfiguration('fy', default=432.496042035043)
     
     max_vel = LaunchConfiguration('max_vel', default=2.0)
     max_acc = LaunchConfiguration('max_acc', default=3.0)
@@ -41,7 +41,7 @@ def generate_launch_description():
     point4_y = LaunchConfiguration('point4_y', default=30.0)
     point4_z = LaunchConfiguration('point4_z', default=1.0)
 
-    flight_type = LaunchConfiguration('flight_type', default=2)
+    flight_type = LaunchConfiguration('flight_type', default=1)
     use_distinctive_trajs = LaunchConfiguration('use_distinctive_trajs', default=True)
     
     obj_num_set = LaunchConfiguration('obj_num_set', default=10)
@@ -159,7 +159,7 @@ def generate_launch_description():
             {'grid_map/depth_filter_maxdist': 5.0},
             {'grid_map/depth_filter_mindist': 0.2},
             {'grid_map/depth_filter_margin': 2},
-            {'grid_map/k_depth_scaling_factor': 1000.0},
+            {'grid_map/k_depth_scaling_factor': 1.0},
             {'grid_map/skip_pixel': 2},
             # local fusion
             {'grid_map/p_hit': 0.65},

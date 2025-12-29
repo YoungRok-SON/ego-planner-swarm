@@ -26,7 +26,7 @@ void GridMap::initMap(rclcpp::Node::SharedPtr node)
   node_->declare_parameter("grid_map/depth_filter_maxdist", -1.0);
   node_->declare_parameter("grid_map/depth_filter_mindist", -1.0);
   node_->declare_parameter("grid_map/depth_filter_margin", -1);
-  node_->declare_parameter("grid_map/k_depth_scaling_factor", -1.0);
+  node_->declare_parameter("grid_map/k_depth_scaling_factor", 1.0);
   node_->declare_parameter("grid_map/skip_pixel", -1);
   node_->declare_parameter("grid_map/p_hit", 0.70);
   node_->declare_parameter("grid_map/p_miss", 0.35);

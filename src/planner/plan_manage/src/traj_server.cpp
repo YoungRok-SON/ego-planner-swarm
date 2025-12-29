@@ -2,11 +2,15 @@
 #include "nav_msgs/msg/odometry.hpp"
 #include "traj_utils/msg/bspline.hpp"
 #include "quadrotor_msgs/msg/position_command.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/twist.hpp"
 #include "std_msgs/msg/empty.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 #include <rclcpp/rclcpp.hpp>
 
 rclcpp::Publisher<quadrotor_msgs::msg::PositionCommand>::SharedPtr pos_cmd_pub;
+rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub;
+rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr twist_pub;
 
 quadrotor_msgs::msg::PositionCommand cmd;
 double pos_gain[3] = {0, 0, 0};
@@ -205,7 +209,6 @@ void cmdCallback()
     cout << "[Traj server]: invalid time." << endl;
   }
   time_last = time_now;
-
   cmd.header.stamp = time_now;
   cmd.header.frame_id = "world";
   cmd.trajectory_flag = quadrotor_msgs::msg::PositionCommand::TRAJECTORY_STATUS_READY;
@@ -229,6 +232,35 @@ void cmdCallback()
   last_yaw_ = cmd.yaw;
 
   pos_cmd_pub->publish(cmd);
+  
+  // cmd.header.stamp = time_now;
+  // Publish to px4_ros_com offboard_control topics
+  // Pose message (position + yaw)
+  geometry_msgs::msg::PoseStamped pose_msg;
+  pose_msg.header.stamp = time_now;
+  pose_msg.header.frame_id = "world";
+  pose_msg.pose.position.x = pos(0);
+  pose_msg.pose.position.y = pos(1);
+  pose_msg.pose.position.z = -pos(2);
+  double yaw = yaw_yawdot.first;
+  // quaternion for yaw about Z
+  pose_msg.pose.orientation.x = 0.0;
+  pose_msg.pose.orientation.y = 0.0;
+  pose_msg.pose.orientation.z = sin(yaw * 0.5);
+  pose_msg.pose.orientation.w = cos(yaw * 0.5);
+  pose_pub->publish(pose_msg);
+
+  // Twist message (velocity + yaw rate)
+  geometry_msgs::msg::Twist twist_msg;
+  // twist_msg.header.stamp = time_now;
+  // twist_msg.header.frame_id = "world";
+  twist_msg.linear.x = vel(0);
+  twist_msg.linear.y = vel(1);
+  twist_msg.linear.z = vel(2);
+  // twist_msg.angular.x = 0.0;
+  // twist_msg.angular.y = 0.0;
+  twist_msg.angular.z = yaw_yawdot.second;
+  // twist_pub->publish(twist_msg);
 }
 
 int main(int argc, char **argv)
@@ -244,6 +276,15 @@ int main(int argc, char **argv)
   pos_cmd_pub = node->create_publisher<quadrotor_msgs::msg::PositionCommand>(
       "/position_cmd",
       50);
+
+    // Publishers for px4_ros_com offboard_control (/command/pose and /command/twist)
+    pose_pub = node->create_publisher<geometry_msgs::msg::PoseStamped>(
+      "/command/pose",
+      10);
+
+    twist_pub = node->create_publisher<geometry_msgs::msg::Twist>(
+      "/command/twist",
+      10);
 
   auto cmd_timer = node->create_wall_timer(
       std::chrono::milliseconds(10),

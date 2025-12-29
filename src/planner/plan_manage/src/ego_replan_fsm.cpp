@@ -115,7 +115,7 @@ namespace ego_planner
     if (target_type_ == TARGET_TYPE::MANUAL_TARGET)
     {
       waypoint_sub_ = node_->create_subscription<geometry_msgs::msg::PoseStamped>(
-          "/move_base_simple/goal",
+          "/goal_pose",
           1,
           [this](const std::shared_ptr<const geometry_msgs::msg::PoseStamped> &msg)
           {
@@ -241,7 +241,7 @@ namespace ego_planner
 
     init_pt_ = odom_pos_;
 
-    Eigen::Vector3d end_wp(msg->pose.position.x, msg->pose.position.y, 1.0);
+    Eigen::Vector3d end_wp(msg->pose.position.x, msg->pose.position.y, 3.0);
 
     planNextWaypoint(end_wp);
   }
