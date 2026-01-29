@@ -241,7 +241,7 @@ void cmdCallback()
   pose_msg.header.frame_id = "world";
   pose_msg.pose.position.x = pos(0);
   pose_msg.pose.position.y = pos(1);
-  pose_msg.pose.position.z = -pos(2);
+  pose_msg.pose.position.z = pos(2);
   double yaw = yaw_yawdot.first;
   // quaternion for yaw about Z
   pose_msg.pose.orientation.x = 0.0;
